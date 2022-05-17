@@ -52,3 +52,7 @@ $ npx truffle migrate --network development
 $ npx truffle console --network development
 ```
 
+### Test
+```bash
+$ npm run test
+```
