@@ -30,12 +30,12 @@ describe('ArtNFT', function () {
     expect(await this.artnft.symbol()).to.equal('ANT');
   });
 
-  it('Minting test', async function () {
+  it('minting test - the owner of nft should be correct', async function () {
     let step;
-    const maxTry = 100;
+    const maxTry = 10;
     for (step=0; step < maxTry ; step++ ) {
       await this.artnft.safeMint(accounts[2], {from: owner});
-      expect(await this.artnft.ownerOf(0)).to.equal(accounts[2]);
+      expect(await this.artnft.ownerOf(step)).to.equal(accounts[2]);
     }
   });
 });
