@@ -17,7 +17,7 @@ abstract contract TBAC is Context, ITBAC {
 
     struct PermissionData {
         AdminData adminList;
-        uint256[] allowerExpiredTimeList;
+        mapping(uint256 => uint) allowerExpiredTimeList;
     }
 
     mapping(uint256 => PermissionData) private _accessibleList;
@@ -197,8 +197,8 @@ abstract contract TBAC is Context, ITBAC {
       // TODO :
       // 1. clear _accessibleList[tokenId]
       // 2. set new owner
-      delete _accessibleList[tokenId].allowerExpiredTimeList;
-      delete _accessibleList[tokenId].adminList;
+      //delete _accessibleList[tokenId].allowerExpiredTimeList;
+      delete _accessibleList[tokenId];
       _setOwner(tokenId, account);
       _countUpAdmin(tokenId);
     }
