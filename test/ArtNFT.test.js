@@ -115,7 +115,8 @@ describe('ArtNFT', function () {
     let newOwner = accounts[2];
     const DUMMY_TOKEN_URI = "www.google.com";
     await this.artnft.safeMint(tokenOwner, DUMMY_TOKEN_URI, {from: owner});
-    await this.artnft.safeTransferFrom(tokenOwner, newOwner, tokenId, {from: tokenOwner});
+    let transfer_result = await this.artnft.safeTransferFrom(tokenOwner, newOwner, tokenId, {from: tokenOwner});
+    console.log(`one time token transfer gas Used : ${transfer_result.receipt.gasUsed}`);
     expect(await this.artnft.tokenURI(tokenId, {from: newOwner})).to.equal(DUMMY_TOKEN_URI);
   });
 
