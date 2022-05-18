@@ -134,5 +134,22 @@ describe('ArtNFT', function () {
     console.log(admin_account);
     expect(await this.artnft.tokenURI(tokenId, {from: tokenOwner}).should.be.rejectedWith(EVM_REVERT));
   });
+
+  it('After permission time expired, user can not access token metadata', async function() {
+    let tokenId = 0;
+    let nftowner = accounts[6];
+    let nftviewer = accounts[7];
+    const TOKENURI = "www.google.com";
+    const ALLOWED_SEC = 60;
+
+    await this.artnft.safeMint(nftowner, TOKENURI, {from: owner});
+    await this.artnft.allowPermission(tokenId, ALLOWED_SEC, nftviewer, {from : nftowner});
+    let nftviewer_access_result = await this.artnft.tokenURI(tokenId, {from: nftviewer});
+    console.log(`[nftviewer] tokenURI : ${nftviewer_access_result}`);
+    setTimeout(async () => {
+      expect(await this.artnft.tokenURI(tokenId, {from: nftviewer}).should.be.rejectedWith(EVM_REVERT));
+    }, ALLOWED_SEC);
+  });
+
 });
 
