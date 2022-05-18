@@ -34,8 +34,8 @@ describe('ArtNFT', function () {
     let step;
     let accountIndex; // Max is 9
     let totalUsedGas;
-    const MAX_ACCOUNT = 10;
-    const MAX_TRY = 10;
+    const MAX_ACCOUNT = 9;
+    const MAX_TRY = 100;
     const DUMMY_TOKEN_URI = "www.google.com";
     for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
       let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
@@ -53,7 +53,7 @@ describe('ArtNFT', function () {
   it('tokenUri access test - token owner should be allowed', async function () {
     let step;
     let accountIndex;
-    const MAX_ACCOUNT = 10;
+    const MAX_ACCOUNT = 9;
     const MAXTRY = 10;
     const DUMMY_TOKEN_URI = "www.google.com";
     for (step=0, accountIndex=0; step < MAXTRY ; step++ ) {
