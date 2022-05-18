@@ -4,6 +4,9 @@
   "description": "Time Role based access control contract for art nft",
   "main": "index.js",
   "scripts": {
+    "build": "npx truffle compile",
+    "deploy:dev": "npx truffle migrate --network development",
+    "console": "npx truffle console --network development",
     "test": "truffle compile && mocha --exit --recursive --timeout 30000",
     "reset": "rm -rf node_modules && npm install"
   },

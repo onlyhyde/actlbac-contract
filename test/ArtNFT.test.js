@@ -30,13 +30,83 @@ describe('ArtNFT', function () {
     expect(await this.artnft.symbol()).to.equal('ANT');
   });
 
-  it('minting test - the owner of nft should be correct', async function () {
+  it('multiple minting test - the owner of nft should be correct', async function () {
     let step;
-    const maxTry = 10;
-    for (step=0; step < maxTry ; step++ ) {
-      await this.artnft.safeMint(accounts[2], {from: owner});
-      expect(await this.artnft.ownerOf(step)).to.equal(accounts[2]);
+    let accountIndex; // Max is 9
+    let totalUsedGas;
+    const MAX_ACCOUNT = 10;
+    const MAX_TRY = 10;
+    const DUMMY_TOKEN_URI = "www.google.com";
+    for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
+      let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
+      expect(await this.artnft.ownerOf(step)).to.equal(accounts[accountIndex]);
+      totalUsedGas += result.receipt.gasUsed;
+      if (accountIndex == MAX_ACCOUNT) {
+        accountIndex = 0;
+      } else {
+        accountIndex++;
+      }
     }
+    console.log(`Total Try is ${MAX_TRY}. Total used gas : ${totalUsedGas}`);
+  });
+
+  it('tokenUri access test - token owner should be allowed', async function () {
+    let step;
+    let accountIndex;
+    const MAX_ACCOUNT = 10;
+    const MAXTRY = 10;
+    const DUMMY_TOKEN_URI = "www.google.com";
+    for (step=0, accountIndex=0; step < MAXTRY ; step++ ) {
+      await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
+      let result = await this.artnft.tokenURI(step, {from: accounts[accountIndex]});
+      expect(result).to.equal(DUMMY_TOKEN_URI);
+      if (accountIndex == MAX_ACCOUNT) {
+        accountIndex = 0;
+      } else {
+        accountIndex++;
+      }
+    }
+  });
+
+  it('tokenUri access reject test - others who has not permission should not be allowed', async function () {
+    let tokenId = 0;
+    let tokenOwner = accounts[1];
+    let other = accounts[2];
+    const DUMMY_TOKEN_URI = "www.google.com";
+    await this.artnft.safeMint(tokenOwner, DUMMY_TOKEN_URI, {from: owner});
+    expect(await this.artnft.tokenURI(tokenId, {from: other}).should.be.rejectedWith(EVM_REVERT));
+  });
+
+
+
+  it('token Owner can allow permission to others', async function () {
+    let tokenId = 0;
+    let nftowner = accounts[3];
+    let nftviewer = accounts[4];
+    const TOKENURI = "www.google.com";
+
+    let mint_result = await this.artnft.safeMint(nftowner, TOKENURI, {from: owner});
+    console.log(`one time minting gas Used : ${mint_result.receipt.gasUsed}`);
+
+    let nftowner_access_result = await this.artnft.tokenURI(tokenId, {from: nftowner});
+    console.log(`[nftowner] tokenURI : ${nftowner_access_result}`);
+    expect(nftowner_access_result).to.equal(TOKENURI);
+
+    // Allow Permission
+    let allow_reviewer_result = await this.artnft.allowPermission(tokenId, nftviewer, {from : nftowner});
+    console.log(`one time grant permission gas Used : ${allow_reviewer_result.receipt.gasUsed}`);
+    let nftviewer_access_result = await this.artnft.tokenURI(tokenId, {from: nftviewer});
+    console.log(`[nftviewer] tokenURI : ${nftviewer_access_result}`);
+    expect(nftviewer_access_result).to.equal(TOKENURI);
+  });
+
+  it('No permission No access', async function() {
+    let nftowner = accounts[4];
+    let nftviewer = accounts[5];
+    const TOKENURI = "www.google.com";
+
+    await this.artnft.safeMint(nftowner, TOKENURI, {from: owner});
+    expect(await this.artnft.allowPermission(0, nftviewer, {from : owner}).should.be.rejectedWith(EVM_REVERT));
   });
 });
 
