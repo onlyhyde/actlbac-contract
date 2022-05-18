@@ -35,13 +35,13 @@ describe('ArtNFT', function () {
     let accountIndex; // Max is 9
     let totalUsedGas;
     const MAX_ACCOUNT = 10;
-    const MAX_TRY = 10;
+    const MAX_TRY = 100;
     const DUMMY_TOKEN_URI = "www.google.com";
     for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
       let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
       expect(await this.artnft.ownerOf(step)).to.equal(accounts[accountIndex]);
       totalUsedGas += result.receipt.gasUsed;
-      if (accountIndex == MAX_ACCOUNT) {
+      if (accountIndex == MAX_ACCOUNT-1) {
         accountIndex = 0;
       } else {
         accountIndex++;
@@ -60,7 +60,7 @@ describe('ArtNFT', function () {
       await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
       let result = await this.artnft.tokenURI(step, {from: accounts[accountIndex]});
       expect(result).to.equal(DUMMY_TOKEN_URI);
-      if (accountIndex == MAX_ACCOUNT) {
+      if (accountIndex == MAX_ACCOUNT-1) {
         accountIndex = 0;
       } else {
         accountIndex++;

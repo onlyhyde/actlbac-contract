@@ -17,7 +17,7 @@ abstract contract TBAC is Context, ITBAC {
 
     struct PermissionData {
         AdminData adminList;
-        mapping(uint256 => uint) allowerExpiredTimeList;
+        mapping(address => uint) allowerExpiredTimeList;
     }
 
     mapping(uint256 => PermissionData) private _accessibleList;
@@ -85,7 +85,7 @@ abstract contract TBAC is Context, ITBAC {
       // TODO :
       // 1. read time
       // 2. read time > 0 && read time > block.timestamp ? true else false 
-      uint expiredTime = _accessibleList[tokenId].allowerExpiredTimeList[uint256(uint160(account))];
+      uint expiredTime = _accessibleList[tokenId].allowerExpiredTimeList[account];
       return ((expiredTime > 0) && (expiredTime > block.timestamp)) ? true : false;
     }
     
@@ -151,7 +151,7 @@ abstract contract TBAC is Context, ITBAC {
     }
 
     function _grantTime(uint256 tokenId, uint sec, address account) internal virtual {
-      _accessibleList[tokenId].allowerExpiredTimeList[uint256(uint160(account))] = block.timestamp + sec;
+      _accessibleList[tokenId].allowerExpiredTimeList[account] = block.timestamp + sec;
       emit TimeGranted(tokenId, account, _msgSender());
     }
 
@@ -165,7 +165,7 @@ abstract contract TBAC is Context, ITBAC {
     }
 
     function _revokeTime(uint256 tokenId, address account) internal virtual {
-      _accessibleList[tokenId].allowerExpiredTimeList[uint256(uint160(account))] = 0;
+      _accessibleList[tokenId].allowerExpiredTimeList[account] = 0;
       emit TimeRevoked(tokenId, account, _msgSender());
     }
 
