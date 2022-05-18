@@ -21,7 +21,7 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
         _safeMint(to, tokenId);
 
         _setTokenURI(tokenId, uri);
-        _setAdmin(tokenId, to);
+        _grantOwner(tokenId, to);
     }
 
     // The following functions are overrides required by Solidity.
@@ -41,7 +41,7 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
 
     function allowPermission(uint256 tokenId, uint sec, address allowedAccount) 
         public  
-        onlyAdmin(tokenId)
+        onlyTokenOwner(tokenId)
     {
         grantTime(tokenId, sec, allowedAccount);
     }
@@ -54,4 +54,7 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
       super.safeTransferFrom(from, to, tokenId);
       _changeTokenOwner(tokenId, to);
     }
+
+    // TODO :
+    // 1. Operator가 등록되었을 때, Approval 이벤트를 받아서, admin의 operator로 등록. 
 }

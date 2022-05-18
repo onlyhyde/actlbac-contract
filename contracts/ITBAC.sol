@@ -10,7 +10,7 @@ interface ITBAC {
 
     function grantTime(uint256 tokenId, uint sec, address account) external;
     function revokeTime(uint256 tokenId, address account) external;
-    function hasTime(uint256 tokenId, address account) external view returns (bool);
+    function hasValidTime(uint256 tokenId, address account) external view returns (bool);
 
     // function getTimeAdmin(uint256 tokenId) external view returns (uint);
 }
