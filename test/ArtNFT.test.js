@@ -73,7 +73,8 @@ describe('ArtNFT', function () {
     let tokenOwner = accounts[1];
     let other = accounts[2];
     const DUMMY_TOKEN_URI = "www.google.com";
-    await this.artnft.safeMint(tokenOwner, DUMMY_TOKEN_URI, {from: owner});
+    let mint_result = await this.artnft.safeMint(tokenOwner, DUMMY_TOKEN_URI, {from: owner});
+    console.log(`one time minting gas Used : ${mint_result.receipt.gasUsed}`);
     expect(await this.artnft.tokenURI(tokenId, {from: other})).to.equal(DUMMY_TOKEN_URI);
   });
 
