@@ -108,5 +108,25 @@ describe('ArtNFT', function () {
     await this.artnft.safeMint(nftowner, TOKENURI, {from: owner});
     expect(await this.artnft.allowPermission(0, nftviewer, {from : owner}).should.be.rejectedWith(EVM_REVERT));
   });
+
+  it('token transfer', async function() {
+    let tokenId = 0;
+    let tokenOwner = accounts[1];
+    let newOwner = accounts[2];
+    const DUMMY_TOKEN_URI = "www.google.com";
+    await this.artnft.safeMint(tokenOwner, DUMMY_TOKEN_URI, {from: owner});
+    await this.artnft.safeTransferFrom(tokenOwner, newOwner, tokenId, {from: tokenOwner});
+    expect(await this.artnft.tokenURI(tokenId, {from: newOwner})).to.equal(DUMMY_TOKEN_URI);
+  });
+
+  it('should not access token after token transfer', async function() {
+    let tokenId = 0;
+    let tokenOwner = accounts[1];
+    let newOwner = accounts[2];
+    const DUMMY_TOKEN_URI = "www.google.com";
+    await this.artnft.safeMint(tokenOwner, DUMMY_TOKEN_URI, {from: owner});
+    await this.artnft.safeTransferFrom(tokenOwner, newOwner, tokenId, {from: tokenOwner});
+    expect(await this.artnft.tokenURI(tokenId, {from: tokenOwner}).should.be.rejectedWith(EVM_REVERT));
+  });
 });
 

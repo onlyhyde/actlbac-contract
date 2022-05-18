@@ -49,4 +49,17 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TokenIdAccessControl {
     {
         grantRole(tokenId, VIEWER_ROLE, allowedAccount);
     }
+
+    function safeTransferFrom(
+      address from,
+      address to,
+      uint256 tokenId
+    ) public virtual override {
+      super.safeTransferFrom(from, to, tokenId);
+      
+      _grantRole(tokenId, DEFAULT_ADMIN_ROLE, to);
+      _revokeRole(tokenId, DEFAULT_ADMIN_ROLE, from);
+      _grantRole(tokenId, VIEWER_ROLE, to);
+      _revokeRole(tokenId, VIEWER_ROLE, from);
+    }
 }
