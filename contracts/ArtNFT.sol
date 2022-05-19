@@ -11,17 +11,19 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
+    mapping(uint256 => string) private _metadataHash;
 
     constructor() ERC721("ArtNFT", "ANT") {
     }
 
-    function safeMint(address to, string memory uri) public onlyOwner {
+    function safeMint(address to, string memory uri, string memory hash) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
 
         _setTokenURI(tokenId, uri);
         _grantOwner(tokenId, to);
+        _setMetadataHash(tokenId, hash);
     }
 
     // The following functions are overrides required by Solidity.
@@ -53,6 +55,18 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
     ) public virtual override {
       super.safeTransferFrom(from, to, tokenId);
       _changeTokenOwner(tokenId, to);
+    }
+
+    function _setMetadataHash(uint256 tokenId, string memory hash) private {
+        require(bytes(hash).length > 0);
+        _metadataHash[tokenId] = hash;
+    }
+
+    function isValidHash(uint256 tokenId, string memory hash) public view onlyHasPermission(tokenId) returns(bool) {
+        require(bytes(hash).length > 0);
+
+        string memory _tokenMetaHash = _metadataHash[tokenId];
+        return keccak256(abi.encodePacked(_tokenMetaHash)) == keccak256(abi.encodePacked(hash));
     }
 
     // TODO :
