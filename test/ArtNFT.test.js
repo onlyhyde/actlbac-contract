@@ -35,7 +35,87 @@ describe('ArtNFT', function () {
     let accountIndex; // Max is 9
     let totalUsedGas;
     const MAX_ACCOUNT = 10;
+    const MAX_TRY = 1;
+    const DUMMY_TOKEN_URI = "www.google.com";
+    for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
+      let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
+      expect(await this.artnft.ownerOf(step)).to.equal(accounts[accountIndex]);
+      totalUsedGas += result.receipt.gasUsed;
+      if (accountIndex == MAX_ACCOUNT-1) {
+        accountIndex = 0;
+      } else {
+        accountIndex++;
+      }
+    }
+    console.log(`Total Try is ${MAX_TRY}. Total used gas : ${totalUsedGas}`);
+  });
+
+  it('multiple minting test - the owner of nft should be correct', async function () {
+    let step;
+    let accountIndex; // Max is 9
+    let totalUsedGas;
+    const MAX_ACCOUNT = 10;
+    const MAX_TRY = 10;
+    const DUMMY_TOKEN_URI = "www.google.com";
+    for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
+      let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
+      expect(await this.artnft.ownerOf(step)).to.equal(accounts[accountIndex]);
+      totalUsedGas += result.receipt.gasUsed;
+      if (accountIndex == MAX_ACCOUNT-1) {
+        accountIndex = 0;
+      } else {
+        accountIndex++;
+      }
+    }
+    console.log(`Total Try is ${MAX_TRY}. Total used gas : ${totalUsedGas}`);
+  });
+
+  it('multiple minting test - the owner of nft should be correct', async function () {
+    let step;
+    let accountIndex; // Max is 9
+    let totalUsedGas;
+    const MAX_ACCOUNT = 10;
     const MAX_TRY = 100;
+    const DUMMY_TOKEN_URI = "www.google.com";
+    for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
+      let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
+      expect(await this.artnft.ownerOf(step)).to.equal(accounts[accountIndex]);
+      totalUsedGas += result.receipt.gasUsed;
+      if (accountIndex == MAX_ACCOUNT-1) {
+        accountIndex = 0;
+      } else {
+        accountIndex++;
+      }
+    }
+    console.log(`Total Try is ${MAX_TRY}. Total used gas : ${totalUsedGas}`);
+  });
+
+  it('multiple minting test - the owner of nft should be correct', async function () {
+    let step;
+    let accountIndex; // Max is 9
+    let totalUsedGas;
+    const MAX_ACCOUNT = 10;
+    const MAX_TRY = 200;
+    const DUMMY_TOKEN_URI = "www.google.com";
+    for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
+      let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
+      expect(await this.artnft.ownerOf(step)).to.equal(accounts[accountIndex]);
+      totalUsedGas += result.receipt.gasUsed;
+      if (accountIndex == MAX_ACCOUNT-1) {
+        accountIndex = 0;
+      } else {
+        accountIndex++;
+      }
+    }
+    console.log(`Total Try is ${MAX_TRY}. Total used gas : ${totalUsedGas}`);
+  });
+
+  it('multiple minting test - the owner of nft should be correct', async function () {
+    let step;
+    let accountIndex; // Max is 9
+    let totalUsedGas;
+    const MAX_ACCOUNT = 10;
+    const MAX_TRY = 500;
     const DUMMY_TOKEN_URI = "www.google.com";
     for (step=0, accountIndex=0, totalUsedGas=0; step < MAX_TRY ; step++ ) {
       let result = await this.artnft.safeMint(accounts[accountIndex], DUMMY_TOKEN_URI, {from: owner});
