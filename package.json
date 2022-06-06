@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npx truffle compile",
     "deploy:dev": "npx truffle migrate --network development",
+    "deploy:reset": "npx truffle migrate --reset",
     "console": "npx truffle console --network development",
     "test": "truffle compile && mocha --exit --recursive --timeout 30000",
     "reset": "rm -rf node_modules && npm install"

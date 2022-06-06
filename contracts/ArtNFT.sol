@@ -3,27 +3,26 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./TBAC.sol";
+import "./ACTLBAC.sol";
 
-contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
+contract ArtNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable, ACTLBAC {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
-    mapping(uint256 => string) private _metadataHash;
 
     constructor() ERC721("ArtNFT", "ANT") {
+        _setConractOwner(_msgSender());
     }
 
-    function safeMint(address to, string memory uri, string memory hash) public onlyOwner {
+    function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
-
         _setTokenURI(tokenId, uri);
-        _grantOwner(tokenId, to);
-        _setMetadataHash(tokenId, hash);
+        create_actl(tokenId, to);
     }
 
     // The following functions are overrides required by Solidity.
@@ -41,11 +40,20 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
         return super.tokenURI(tokenId);
     }
 
-    function allowPermission(uint256 tokenId, uint sec, address allowedAccount) 
-        public  
-        onlyTokenOwner(tokenId)
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
     {
-        grantTime(tokenId, sec, allowedAccount);
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     function safeTransferFrom(
@@ -54,21 +62,34 @@ contract ArtNFT is ERC721, ERC721URIStorage, Ownable, TBAC {
       uint256 tokenId
     ) public virtual override {
       super.safeTransferFrom(from, to, tokenId);
-      _changeTokenOwner(tokenId, to);
+      _change_actl_owner(tokenId, to);
     }
 
-    function _setMetadataHash(uint256 tokenId, string memory hash) private {
-        require(bytes(hash).length > 0);
-        _metadataHash[tokenId] = hash;
+    function approve(
+      address to,
+      uint256 tokenId
+    ) public virtual override {
+      super.approve(to, tokenId);
+      _safeGrantAdmin(tokenId, to);
     }
 
-    function isValidHash(uint256 tokenId, string memory hash) public view onlyHasPermission(tokenId) returns(bool) {
-        require(bytes(hash).length > 0);
-
-        string memory _tokenMetaHash = _metadataHash[tokenId];
-        return keccak256(abi.encodePacked(_tokenMetaHash)) == keccak256(abi.encodePacked(hash));
+    function setApprovalForAll(
+      address operator, 
+      bool approved
+    ) public virtual override {
+      super.setApprovalForAll(operator, approved);
+      uint256 balance = ERC721.balanceOf(_msgSender());
+      uint256 i;
+      if (approved) {
+        for (i=0; i < balance; i++) {
+            uint256 tokenId = tokenOfOwnerByIndex(_msgSender(), i);
+            _safeGrantAdmin(tokenId, operator);
+        }
+      } else {
+        for (i=0; i < balance; i++) {
+            uint256 tokenId = tokenOfOwnerByIndex(_msgSender(), i);
+            _revokeAdmin(tokenId, operator);
+        }
+      }
     }
-
-    // TODO :
-    // 1. Operator가 등록되었을 때, Approval 이벤트를 받아서, admin의 operator로 등록. 
 }
