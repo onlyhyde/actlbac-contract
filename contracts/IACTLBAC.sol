@@ -98,10 +98,10 @@ interface IACTLBAC {
      * - `to`      tokenId의 새로운 owner 주소.
      *
      */
-    function change_actl_owner(
-        uint256 tokenId,
-        address to
-    ) external;
+    // function change_actl_owner(
+    //     uint256 tokenId,
+    //     address to
+    // ) external;
 
     /**
      * @dev 'to'주소를 whitelist로 등록.
